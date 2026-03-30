@@ -28,7 +28,6 @@ $(TARGET).bin: $(TARGET).elf
 clean:
 	rm -f $(OBJS) $(TARGET).elf $(TARGET).bin
 
-# Команда flash теперь должна работать корректно, так как адреса совпадают с Flash
 flash: $(TARGET).bin
 	openocd -f interface/stlink.cfg -f target/stm32h7x.cfg -c "program $(TARGET).elf verify reset exit"
 
