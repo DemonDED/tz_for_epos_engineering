@@ -55,14 +55,28 @@ void Reset_Handler(void) {
 	
 	 unsigned char last_button_state = 0;
 	 unsigned char ld3_state = 0;
-	 unsigned char counter = 0;
+	 //unsigned char counter = 0;
 
     // Код программы
     while (1) {
 		  // Читаем состояние кнопки (PC13)
 		  unsigned char button_state = (GPIOC_IDR & (1 << BUTTON_PIN)) ? 1 : 0;
 			
-		  if ()
+		  if (button_state == 1 && last_button_state == 0) {
+			 delay(500);
+
+			 if (GPIOC_IDR & (1 << BUTTON_PIN)) {
+				if (ld3_state) {
+					GPIOB_BSRR = (1 << (LD3_PIN + 16)); // OFF LD3
+					ld3_state = 0;
+				} else {
+					GPIOB_BSRR = (1 << LD3_PIN); // ON LD3
+					ld3_state = 0;
+				}
+			 }
+		  }
+
+		  last_button_state = button_state;
 
         // Включаем светодиод (высокий уровень) — активный HIGH
         GPIOE_BSRR = (1 << PIN_LD2);
