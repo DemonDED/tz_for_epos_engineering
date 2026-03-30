@@ -9,12 +9,12 @@
 #define GPIOC_BASE			 0x58020800UL
 // --- Настройка GPIO ---
 #define GPIOE_MODER         (*(volatile unsigned int *)(GPIOE_BASE + 0x00))
-#define GPIOB_MODER			 (*(volatile unsigned int *)(GPIOB_BASE + 0x00))
-#define GPIOC_MODER			 (*(volatile unsigned int *)(GPIOC_BASE + 0x00))
-
 #define GPIOE_BSRR          (*(volatile unsigned int *)(GPIOE_BASE + 0x18))
+
+#define GPIOB_MODER			 (*(volatile unsigned int *)(GPIOB_BASE + 0x00))
 #define GPIOB_BSRR			 (*(volatile unsigned int *)(GPIOB_BASE + 0x18))
 
+#define GPIOC_MODER			 (*(volatile unsigned int *)(GPIOC_BASE + 0x00))
 #define GPIOC_IDR				 (*(volatile unsigned int *)(GPIOC_BASE + 0x10))
 #define GPIOC_PUPDR			 (*(volatile unsigned int *)(GPIOC_BASE + 0x0C))
 
@@ -29,8 +29,6 @@ static void delay(volatile unsigned int count) {
     }
 }
 
-
-
 // Точка входа
 void Reset_Handler(void) {
     // Включаем тактирование GPIOE
@@ -39,13 +37,14 @@ void Reset_Handler(void) {
 	 RCC_AHB4ENR |= (1 << 4); // GPIOEEN
 	 RCC_AHB4ENR |= (1 << 1); // GPIOBEN
 	 RCC_AHB4ENR |= (1 << 2); // GPIOCEN
+	
 
     // Настраиваем PE1 как выход (push-pull)
     GPIOE_MODER &= ~(0x3 << (2 * PIN_LD2));  // Очищаем биты режима
     GPIOE_MODER |=  (0x1 << (2 * PIN_LD2));  // Режим выхода (01)
 	 // Настраиваем PB14 как выход (push-pull)
-	 GPIOB_MODER &= ~(0x3 << (2 * PIN_LD2));
-	 GPIOB_MODER |=  (0x1 << (2 * PIN_LD2));
+	 GPIOB_MODER &= ~(0x3 << (2 * PIN_LD3));
+	 GPIOB_MODER |=  (0x1 << (2 * PIN_LD3));
 	 // Настройка кнопки B1 (PC13) как выход с подтяжкой вверх
 	 GPIOC_MODER &= ~(0x3 << (2 * BUTTON_PIN)); // Режим входа
 	 GPIOC_PUPDR &= ~(0x3 << (2 * BUTTON_PIN)); // Очищаем биты режима
@@ -55,7 +54,6 @@ void Reset_Handler(void) {
 	
 	 unsigned char last_button_state = 0;
 	 unsigned char ld3_state = 0;
-	 //unsigned char counter = 0;
 
     // Код программы
     while (1) {
@@ -71,7 +69,7 @@ void Reset_Handler(void) {
 					ld3_state = 0;
 				} else {
 					GPIOB_BSRR = (1 << PIN_LD3); // ON LD3
-					ld3_state = 0;
+					ld3_state = 1;
 				}
 			 }
 		  }
@@ -80,11 +78,11 @@ void Reset_Handler(void) {
 
         // Включаем светодиод (высокий уровень) — активный HIGH
         GPIOE_BSRR = (1 << PIN_LD2);
-        delay(2000000);
+        delay(3000000);
 
         // Выключаем светодиод (низкий уровень)
         GPIOE_BSRR = (1 << (PIN_LD2 + 16));
-        delay(2000000);
+        delay(3000000);
 
     }
 }
