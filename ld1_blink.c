@@ -51,7 +51,7 @@ void Reset_Handler(void) {
 	 GPIOC_PUPDR &= ~(0x3 << (2 * BUTTON_PIN)); // Очищаем биты режима
 	 GPIOC_PUPDR |=  (0x2 << (2 * BUTTON_PIN)); // Подтяжка вниз (pull-down)
 
-	 GPIOB_BSRR = (1 << (LD3_PIN + 16)); // Reset bit
+	 GPIOB_BSRR = (1 << (PIN_LD3 + 16)); // Reset bit
 	
 	 unsigned char last_button_state = 0;
 	 unsigned char ld3_state = 0;
@@ -67,10 +67,10 @@ void Reset_Handler(void) {
 
 			 if (GPIOC_IDR & (1 << BUTTON_PIN)) {
 				if (ld3_state) {
-					GPIOB_BSRR = (1 << (LD3_PIN + 16)); // OFF LD3
+					GPIOB_BSRR = (1 << (PIN_LD3 + 16)); // OFF LD3
 					ld3_state = 0;
 				} else {
-					GPIOB_BSRR = (1 << LD3_PIN); // ON LD3
+					GPIOB_BSRR = (1 << PIN_LD3); // ON LD3
 					ld3_state = 0;
 				}
 			 }
